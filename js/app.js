@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (navigator.share) {
         try {
           await navigator.share({
-            title: 'صدقة جارية عن حسام حسن شكري',
-            text: text + '\n\nهذا الدعاء صدقة جارية عن حسام حسن شكري. شاركنا الأجر.',
+            title: 'صدقة جارية عن حسام حسني شكري',
+            text: text + '\n\nهذا الدعاء صدقة جارية عن حسام حسني شكري. شاركنا الأجر.',
           });
         } catch (err) {
           console.error('Share failed:', err);
@@ -80,8 +80,61 @@ document.addEventListener('DOMContentLoaded', () => {
   const quranContent = document.getElementById('quran-content');
   const readerSurahTitle = document.getElementById('reader-surah-title');
   const bismillah = document.getElementById('bismillah');
+  const bookmarkBtn = document.getElementById('bookmark-btn');
+  const bookmarkBanner = document.getElementById('bookmark-banner');
+  const bookmarkText = document.getElementById('bookmark-text');
+  const gotoBookmarkBtn = document.getElementById('goto-bookmark-btn');
 
   let quranData = null;
+  let currentOpenSurahId = null;
+
+  // ---- Bookmark Logic ----
+  function getBookmark() {
+    const bm = localStorage.getItem('quranBookmark');
+    return bm ? JSON.parse(bm) : null;
+  }
+
+  function saveBookmark(surahId, surahName) {
+    const scrollY = window.scrollY;
+    const bm = { surahId, surahName, scrollY };
+    localStorage.setItem('quranBookmark', JSON.stringify(bm));
+    showBookmarkSaved(surahName);
+    updateBookmarkBanner();
+  }
+
+  function updateBookmarkBanner() {
+    const bm = getBookmark();
+    if (bm) {
+      bookmarkText.innerText = `📌 آخر موضع محفوظ: سورة ${bm.surahName}`;
+      bookmarkBanner.style.display = 'flex';
+    } else {
+      bookmarkBanner.style.display = 'none';
+    }
+  }
+
+  function showBookmarkSaved(surahName) {
+    const orig = bookmarkBtn.innerText;
+    bookmarkBtn.innerText = '✅ تم الحفظ';
+    bookmarkBtn.classList.add('btn-saved');
+    setTimeout(() => {
+      bookmarkBtn.innerText = orig;
+      bookmarkBtn.classList.remove('btn-saved');
+    }, 2000);
+  }
+
+  bookmarkBtn.addEventListener('click', () => {
+    if (!currentOpenSurahId || !quranData) return;
+    const surah = quranData.find(s => s.id === currentOpenSurahId);
+    if (surah) saveBookmark(surah.id, surah.name);
+  });
+
+  gotoBookmarkBtn.addEventListener('click', () => {
+    const bm = getBookmark();
+    if (!bm || !quranData) return;
+    openSurah(bm.surahId);
+    // Restore scroll after render
+    setTimeout(() => window.scrollTo({ top: bm.scrollY, behavior: 'smooth' }), 200);
+  });
 
   async function loadQuran() {
     try {
@@ -123,6 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const surah = quranData.find(s => s.id === surahId);
     if (!surah) return;
 
+    currentOpenSurahId = surahId;
     readerSurahTitle.innerText = 'سورة ' + surah.name;
     
     // Hide Bismillah for Tawbah (Surah 9)
@@ -146,6 +200,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     quranContainer.style.display = 'none';
     quranReader.classList.add('active');
+    
+    // Show bookmark banner if there's a saved bookmark
+    updateBookmarkBanner();
     
     // Scroll to top
     window.scrollTo(0, 0);
