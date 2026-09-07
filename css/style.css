@@ -398,8 +398,8 @@ main {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 1.8em;
-  height: 1.8em;
+  width: 2em;
+  height: 2em;
   font-size: 0.55em;
   border: 2px solid var(--accent-gold);
   border-radius: 50%;
@@ -407,8 +407,64 @@ main {
   color: var(--primary-color);
   font-family: 'Cairo', sans-serif;
   font-weight: bold;
-  background: rgba(212, 175, 55, 0.1);
+  background: rgba(212, 175, 55, 0.08);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+  vertical-align: middle;
+  position: relative;
 }
+
+.ayah-number:hover {
+  background: var(--accent-gold);
+  color: var(--white);
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.ayah-number::after {
+  content: '🔖';
+  position: absolute;
+  font-size: 1.4em;
+  top: -1.2em;
+  right: -0.6em;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+.ayah-number:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Bookmarked state */
+.ayah-number.bookmarked {
+  background: var(--accent-gold);
+  color: var(--white);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.ayah-number.bookmarked::after {
+  content: '🔖';
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Flash animation when returning to bookmark */
+.ayah-number.ayah-flash {
+  animation: ayahFlash 1.5s ease;
+}
+
+@keyframes ayahFlash {
+  0%   { box-shadow: 0 0 0   rgba(212,175,55,0);   transform: scale(1); }
+  30%  { box-shadow: 0 0 20px rgba(212,175,55,0.8); transform: scale(1.4); }
+  60%  { box-shadow: 0 0 12px rgba(212,175,55,0.5); transform: scale(1.2); }
+  100% { box-shadow: 0 0 0   rgba(212,175,55,0);   transform: scale(1); }
+}
+
 
 /* Tasbeeh Section */
 .tasbeeh-selector {

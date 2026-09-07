@@ -113,8 +113,25 @@
     <!-- section: القرآن الكريم -->
     <section id="quran-section" class="section">
       <div id="surah-list-container">
-        <!-- List of surahs will be injected here via JS -->
-        <p style="text-align: center;">جاري تحميل المصحف الشريف...</p>
+        <!-- Quran Index Header -->
+        <div class="quran-index-header">
+          <h2 class="quran-index-title">فهرس القرآن الكريم</h2>
+          <p class="quran-index-subtitle">١١٤ سورة · اضغط على السورة للقراءة</p>
+          <!-- Search -->
+          <div class="search-wrapper">
+            <input type="text" id="surah-search" class="surah-search" placeholder="🔍 ابحث عن سورة...">
+          </div>
+          <!-- Filter tabs -->
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">الكل</button>
+            <button class="filter-tab" data-filter="meccan">مكية</button>
+            <button class="filter-tab" data-filter="medinan">مدنية</button>
+          </div>
+        </div>
+        <!-- Surah list injected here -->
+        <div id="surah-grid">
+          <p style="text-align:center; padding:2rem;">جاري تحميل المصحف الشريف...</p>
+        </div>
       </div>
 
       <!-- Reader view -->
